@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '../../../test-utils';
+import { screen } from '@testing-library/react';
 import Type from '../Type';
 import { rest } from 'msw';
 import { server } from '../../../mocks/server';
