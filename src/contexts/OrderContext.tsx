@@ -11,7 +11,7 @@ export type OrderContextProps = [{
   totals: Total,
   products: Map<string, number>,
   options: Map<string, number>
-}, UpdateItemCountFunc];
+}, UpdateItemCountFunc, () => void];
 
 const OrderContext = createContext<OrderContextProps | []>([]);
 
@@ -41,6 +41,13 @@ export const OrderContextProvider = (props: PropsWithChildren) => {
     total: 0
   }));
   
+  const resetOrderDatas = () => {
+    setOrderCounts({
+      products: new Map<string, number>(),
+      options: new Map<string, number>()
+    });
+  };
+  
   useEffect(() => {
     const productsTotal = calculateSubtotal('products', orderCounts);
     const optionsTotal = calculateSubtotal('options', orderCounts);
@@ -63,7 +70,7 @@ export const OrderContextProvider = (props: PropsWithChildren) => {
       setOrderCounts(newOrderCounts);
     };
     
-    return [{...orderCounts, totals}, updateItemCount];
+    return [{...orderCounts, totals}, updateItemCount, resetOrderDatas];
   }, [orderCounts, totals]);
   
   return <OrderContext.Provider value={value} {...props} />

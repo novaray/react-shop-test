@@ -73,6 +73,32 @@ userEvent를 앞서 사용했다면 다시 사용하기 전에 `clear`를 해준
 > https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/spinbutton_role  
 > https://www.digitala11y.com/spinbutton-role/
 
+### Not Wrapped in act 경고.
+리액트에서 나오는 act 경고는 컴포넌트에 아무것도 일어나지 않을 것으로 예상하고 있을 때 컴포넌트에 어떤 일이 일어나면 나오는 경고다.  
+원래 컴포넌트에서 무언가가 일어난다고 해주려면 `act`라는 함수로 감싸주어야 한다.  
+`act`함수로 감싸주면 리액트는 컴포넌트에서 어떤 일이 일어날 것이라고 생각하며, 만약 일어나지 않는다면 리액트가 경고를 보여주게 된다.
+
+해당 강의를 들으면서 여태 안 쓴 이유는,  
+react-testing-library 내부 API에 `act`를 이미 내포하고 있어서 일부러 `act`로 감싸서 호출하지 않고 렌더링과 업데이트를 할 수 있다(리액트 콜 스택 안에 있을 때).  
+즉, 이미 내부적으로 사용을 하고 있는 것이다.
+
+**Not Wrapped in act 경고**가 나왔다면,  
+리액트 콜 스택 밖으로 나왔다는 것이다. 그래서 임의로 감싸주어야 하는 것이다.  
+하나의 예로, 컴포넌트가 비동기 API 호출을 할 때나 렌더링이나 어떠한 것이 업데이트 되기 전에 테스트가 종료될 때는 따로 `act`로 감싸주어야 한다.
+
+그래서 이때는, `waitFor` API를 이용해서 테스트가 끝나기 전에 컴포넌트가 다 업데이트 되기를 기다려줘야 한다.  
+`waitFor` API가 `act`로 감싸는 역할을 하는 것이다.
+
+해당 프로젝트에서 에러가 발생한 곳은 `App.test.tsx` 파일에서 다음의 부분에서 발생했었다.
+```javascript
+const firstPageButton = screen.getByRole('button', {
+    name: '첫페이지로'
+  });
+userEvent.click(firstPageButton);
+```
+첫 페이지로 이동하면 비동기로 데이터를 얻어오는 부분이 있는데, 테스트 코드에서는 첫 페이지로 가는 버튼을 누르고 테스트가 끝나버려서  
+`act`경고가 발생하는 것이다.
+
 # 트러블 슈팅
 #### SyntaxError: Cannot use import statement outside a module
 테스트 코드를 진행하던 도중 위의 오류를 마주쳤다.  

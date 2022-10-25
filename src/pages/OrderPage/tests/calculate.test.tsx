@@ -47,8 +47,10 @@ test(`update option's total when options change`, async ()=> {
 });
 
 describe(`total price of goods and options`, () => {
+  const setStep = jest.fn();
+  
   test(`total price starts with 0 and updating total price when one product`, async () => {
-    render(<OrderPage />);
+    render(<OrderPage setStep={setStep} />);
     
     const total = screen.getByText('Total Price:', {
       exact: false
@@ -65,7 +67,7 @@ describe(`total price of goods and options`, () => {
   });
   
   test(`Updating total price when adding one option`, async () => {
-    render(<OrderPage />);
+    render(<OrderPage setStep={setStep} />);
     
     const total = screen.getByText('Total Price:', {
       exact: false
@@ -79,7 +81,7 @@ describe(`total price of goods and options`, () => {
   });
   
   test(`Updating total price when removing option and product`, async () => {
-    render(<OrderPage />);
+    render(<OrderPage setStep={setStep} />);
   
     const total = screen.getByText('Total Price:', {
       exact: false

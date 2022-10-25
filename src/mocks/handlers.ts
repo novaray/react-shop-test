@@ -26,5 +26,9 @@ export const handlers = [
         }
       ])
     );
+  }),
+  rest.post('http://localhost:5001/order', (req, res, ctx) => {
+    const dummyData = [{orderNumber: 123124, price: 2000}];
+    return res(ctx.json(dummyData));
   })
 ];
